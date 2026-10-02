@@ -1,0 +1,3236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>낚시 왕국</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,"Malgun Gothic",sans-serif;
+  background:#071d2d;
+}
+
+button,input{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* =========================
+   시작 화면
+========================= */
+
+#serverSelect{
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 50% 20%,#39bfff 0%,transparent 35%),
+    linear-gradient(#063b62,#031521);
+}
+
+.serverBox{
+  width:min(92%,650px);
+  padding:35px 25px;
+  border-radius:25px;
+  background:rgba(0,0,0,.48);
+  border:2px solid rgba(255,255,255,.2);
+  box-shadow:0 20px 60px #0009;
+  text-align:center;
+  color:white;
+}
+
+.serverBox h1{
+  margin:0 0 10px;
+  font-size:42px;
+}
+
+.serverBox p{
+  color:#ccefff;
+  margin-bottom:30px;
+}
+
+.serverButtons{
+  display:flex;
+  gap:15px;
+  justify-content:center;
+}
+
+.serverButtons button{
+  flex:1;
+  min-height:100px;
+  border:0;
+  border-radius:20px;
+  font-size:22px;
+  font-weight:bold;
+  color:white;
+  box-shadow:0 8px 20px #0006;
+}
+
+.privateBtn{
+  background:linear-gradient(135deg,#1687ff,#0752b8);
+}
+
+.publicBtn{
+  background:linear-gradient(135deg,#a83cff,#5620b9);
+}
+
+.serverButtons button:active{
+  transform:scale(.96);
+}
+
+/* =========================
+   공용 닉네임
+========================= */
+
+#nicknameScreen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,10,20,.92);
+}
+
+.nicknameBox{
+  width:min(90%,430px);
+  padding:30px;
+  background:#102c40;
+  border:2px solid #4cc9ff;
+  border-radius:20px;
+  text-align:center;
+  color:white;
+}
+
+.nicknameBox h2{
+  margin-top:0;
+}
+
+.nicknameBox input{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:12px;
+  font-size:18px;
+  margin:15px 0;
+  outline:none;
+}
+
+.nicknameBox button{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:12px;
+  background:#24a8ff;
+  color:white;
+  font-weight:bold;
+  font-size:18px;
+}
+
+/* =========================
+   공용 서버
+========================= */
+
+#publicGame{
+  position:relative;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+  background:
+    linear-gradient(#5fd5ff 0%,#b8efff 42%,#1482ae 43%,#075b80 100%);
+}
+
+.publicTop{
+  position:absolute;
+  top:10px;
+  left:10px;
+  right:10px;
+  z-index:20;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  pointer-events:none;
+}
+
+.publicInfo,
+.publicCodexInfo{
+  pointer-events:auto;
+  background:#061c2ccc;
+  color:white;
+  padding:10px 15px;
+  border-radius:14px;
+  border:1px solid #ffffff33;
+}
+
+.publicCodexInfo{
+  cursor:pointer;
+}
+
+.publicWorld{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:72%;
+  overflow:hidden;
+}
+
+.publicFloor{
+  position:absolute;
+  left:-100%;
+  width:300%;
+  bottom:0;
+  height:130px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #a76b35 0 70px,
+      #8d562b 70px 74px
+    );
+  border-top:8px solid #603a21;
+}
+
+.publicSea{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:130px;
+  height:50%;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.08) 0 5px,
+      transparent 5px 30px
+    ),
+    linear-gradient(#24b9dc,#08789e);
+}
+
+.publicCollectible{
+  position:absolute;
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:38px;
+  background:#ffffffbb;
+  border:3px solid #fff;
+  box-shadow:0 0 20px #fff;
+  cursor:pointer;
+  user-select:none;
+  animation:floatFish 2s ease-in-out infinite;
+  z-index:5;
+}
+
+.publicCollectible.caught{
+  opacity:.35;
+  filter:grayscale(1);
+}
+
+@keyframes floatFish{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+.publicPlayer{
+  position:absolute;
+  bottom:130px;
+  width:55px;
+  height:85px;
+  z-index:10;
+  transition:left .06s linear;
+}
+
+.playerHead{
+  width:34px;
+  height:34px;
+  margin:auto;
+  border-radius:50%;
+  background:#ffd0a6;
+  border:2px solid #573820;
+}
+
+.playerBody{
+  width:45px;
+  height:48px;
+  margin:3px auto 0;
+  border-radius:12px 12px 6px 6px;
+  border:2px solid #222;
+}
+
+.playerName{
+  position:absolute;
+  bottom:90px;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  background:#061c2cdd;
+  color:white;
+  padding:3px 7px;
+  border-radius:7px;
+  font-size:12px;
+}
+
+.publicHint{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:30;
+  background:#061c2cdd;
+  color:white;
+  padding:10px 18px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+
+/* =========================
+   공용 도감
+========================= */
+
+#publicCodexModal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:#000b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.codexPanel{
+  width:min(1000px,100%);
+  height:min(85vh,750px);
+  background:#102c40;
+  border:2px solid #48c9ff;
+  border-radius:20px;
+  color:white;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+}
+
+.codexHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.codexHeader button{
+  border:0;
+  background:#e84a4a;
+  color:white;
+  border-radius:10px;
+  padding:9px 14px;
+}
+
+.codexTabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:12px 0;
+}
+
+.codexTabs button{
+  border:0;
+  background:#214d65;
+  color:white;
+  border-radius:9px;
+  padding:9px 13px;
+  white-space:nowrap;
+}
+
+.codexTabs button.active{
+  background:#1ca9ee;
+}
+
+.codexGrid{
+  flex:1;
+  overflow-y:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:8px;
+  padding:5px;
+}
+
+.codexCard{
+  min-height:125px;
+  border-radius:12px;
+  background:#173c51;
+  padding:8px;
+  text-align:center;
+  border:1px solid #ffffff16;
+}
+
+.codexCard.known{
+  background:#214f65;
+}
+
+.codexFish{
+  font-size:34px;
+}
+
+.codexUnknown{
+  font-size:34px;
+  color:#aaa;
+}
+
+.codexCard small{
+  display:block;
+  margin-top:4px;
+  color:#bceaff;
+}
+
+/* =========================
+   개인 게임
+========================= */
+
+#privateGame{
+  position:relative;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+  background:linear-gradient(#48bfe8 0 32%,#1589aa 32% 100%);
+}
+
+.privateSky{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:32%;
+  background:
+    radial-gradient(circle at 20% 30%,#fff 0 25px,transparent 26px),
+    radial-gradient(circle at 70% 20%,#fff 0 20px,transparent 21px),
+    linear-gradient(#54cef5,#b9f0ff);
+  opacity:.9;
+}
+
+.ocean{
+  position:absolute;
+  left:0;
+  right:0;
+  top:32%;
+  bottom:0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.06) 0 5px,
+      transparent 5px 32px
+    ),
+    linear-gradient(#16a6cb,#056081);
+}
+
+.dock{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:38%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #a76a35 0 80px,
+      #74441f 80px 86px
+    );
+  border-top:10px solid #55341c;
+  z-index:5;
+}
+
+.character{
+  position:absolute;
+  left:38%;
+  bottom:25%;
+  z-index:10;
+  width:100px;
+  height:160px;
+}
+
+.characterHead{
+  width:55px;
+  height:55px;
+  margin:auto;
+  border-radius:50%;
+  background:#ffd0a6;
+  border:3px solid #513b2c;
+}
+
+.characterBody{
+  width:75px;
+  height:90px;
+  margin:5px auto;
+  background:#2979ff;
+  border:3px solid #17408e;
+  border-radius:20px 20px 10px 10px;
+}
+
+.rod{
+  position:absolute;
+  width:180px;
+  height:7px;
+  background:#49301e;
+  transform:rotate(-30deg);
+  right:-130px;
+  top:55px;
+  transform-origin:left center;
+}
+
+.bobber{
+  position:absolute;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#ff4848;
+  border:3px solid white;
+  z-index:20;
+}
+
+#privateUI{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  pointer-events:none;
+}
+
+.topLeft{
+  position:absolute;
+  left:10px;
+  top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.moneyBox,
+.rodBox{
+  background:#061c2cdd;
+  color:white;
+  padding:9px 13px;
+  border-radius:12px;
+}
+
+.topButtons{
+  position:absolute;
+  right:10px;
+  top:10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  pointer-events:auto;
+}
+
+.uiBtn{
+  border:0;
+  border-radius:10px;
+  padding:9px 12px;
+  background:#102d3fdd;
+  color:white;
+  font-weight:bold;
+}
+
+.uiBtn:hover{
+  background:#1b536d;
+}
+
+.actionButtons{
+  position:absolute;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:8px;
+  pointer-events:auto;
+}
+
+.castBtn{
+  padding:15px 28px;
+  border:0;
+  border-radius:15px;
+  background:#087ee8;
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.catchBar{
+  position:absolute;
+  left:50%;
+  bottom:90px;
+  transform:translateX(-50%);
+  width:min(600px,90%);
+  height:35px;
+  background:#162533;
+  border:3px solid white;
+  border-radius:20px;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.catchFill{
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,#19d77c,#fff200);
+}
+
+.catchText{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  font-weight:bold;
+}
+
+.catchResult{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:50;
+  min-width:250px;
+  padding:20px;
+  border-radius:20px;
+  background:#061c2cee;
+  color:white;
+  text-align:center;
+  font-size:22px;
+  box-shadow:0 15px 50px #0009;
+  pointer-events:none;
+}
+
+.traitNormal{
+  border-color:#aaa!important;
+}
+
+.traitDifferent{
+  border-color:#4ab9ff!important;
+  box-shadow:0 0 20px #4ab9ff;
+}
+
+.traitShiny{
+  border-color:#fff500!important;
+  box-shadow:0 0 25px #fff500;
+  animation:shine 1s infinite alternate;
+}
+
+.traitRainbow{
+  border:3px solid transparent!important;
+  background:
+    linear-gradient(#173c51,#173c51) padding-box,
+    linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet) border-box!important;
+  animation:rainbowGlow 1s linear infinite;
+}
+
+@keyframes shine{
+  from{filter:brightness(1)}
+  to{filter:brightness(1.6)}
+}
+
+@keyframes rainbowGlow{
+  0%{filter:hue-rotate(0deg)}
+  100%{filter:hue-rotate(360deg)}
+}
+
+/* =========================
+   모달
+========================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:#000b;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
+}
+
+.modalBox{
+  width:min(900px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#102c40;
+  color:white;
+  border-radius:20px;
+  padding:20px;
+  border:2px solid #3eb9ed;
+}
+
+.modalHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.closeBtn{
+  border:0;
+  background:#df4646;
+  color:white;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
+.shopGrid,
+.inventoryGrid,
+.saveGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:10px;
+  margin-top:15px;
+}
+
+.itemCard{
+  background:#183e52;
+  border-radius:12px;
+  padding:12px;
+  border:1px solid #ffffff18;
+}
+
+.itemCard button{
+  width:100%;
+  margin-top:8px;
+  border:0;
+  border-radius:8px;
+  padding:9px;
+  background:#148de0;
+  color:white;
+  font-weight:bold;
+}
+
+.sellBtn{
+  background:#16a86b!important;
+}
+
+.deleteBtn{
+  background:#df4444!important;
+}
+
+.saveInput{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:10px;
+  font-size:17px;
+  margin:10px 0;
+}
+
+@media(max-width:700px){
+  .serverBox h1{
+    font-size:32px;
+  }
+
+  .serverButtons{
+    flex-direction:column;
+  }
+
+  .serverButtons button{
+    min-height:75px;
+  }
+
+  .topButtons{
+    top:75px;
+  }
+
+  .topLeft{
+    top:10px;
+  }
+
+  .character{
+    left:30%;
+  }
+
+  .publicHint{
+    font-size:13px;
+  }
+
+  .codexGrid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     서버 선택
+========================= -->
+
+<div id="serverSelect">
+  <div class="serverBox">
+    <h1>🎣 낚시 왕국</h1>
+    <p>어디에서 플레이할까요?</p>
+
+    <div class="serverButtons">
+      <button class="privateBtn" onclick="startPrivate()">
+        🎣<br>개인 서버
+        <small>낚시 · 상점 · 저장</small>
+      </button>
+
+      <button class="publicBtn" onclick="openNickname()">
+        🌐<br>공용 서버
+        <small>다른 플레이어와 함께</small>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     닉네임
+========================= -->
+
+<div id="nicknameScreen" class="hidden">
+  <div class="nicknameBox">
+    <h2>🌐 공용 서버 입장</h2>
+    <p>다른 플레이어에게 표시될 이름을 입력하세요.</p>
+
+    <input id="nicknameInput"
+           maxlength="12"
+           placeholder="닉네임">
+
+    <button onclick="joinPublicServer()">
+      공용 서버 입장
+    </button>
+
+    <button
+      style="margin-top:8px;background:#555"
+      onclick="closeNickname()">
+      취소
+    </button>
+  </div>
+</div>
+
+<!-- =========================
+     공용 게임
+========================= -->
+
+<div id="publicGame" class="hidden">
+
+  <div class="publicTop">
+    <div class="publicInfo">
+      🌐 공용 서버<br>
+      <span id="publicName">-</span>
+    </div>
+
+    <div class="publicCodexInfo"
+         onclick="openPublicCodex()">
+      📖 공용 도감
+      <span id="publicCodexCount">0</span>/400
+    </div>
+  </div>
+
+  <div class="publicWorld" id="publicWorld">
+
+    <div class="publicSea"></div>
+    <div class="publicFloor"></div>
+
+  </div>
+
+  <div class="publicHint">
+    ⬅️ A / D ➡️ 이동 · 🐟 물고기를 찾아 클릭하세요
+  </div>
+</div>
+
+<!-- =========================
+     공용 도감
+========================= -->
+
+<div id="publicCodexModal" class="hidden">
+  <div class="codexPanel">
+
+    <div class="codexHeader">
+      <h2>📖 공용 물고기 도감</h2>
+      <button onclick="closePublicCodex()">닫기</button>
+    </div>
+
+    <div class="codexTabs">
+      <button class="active" onclick="setPublicCodexTab('all',this)">전체</button>
+      <button onclick="setPublicCodexTab('normal',this)">🐟 기본</button>
+      <button onclick="setPublicCodexTab('different',this)">🎨 색이 다른</button>
+      <button onclick="setPublicCodexTab('shiny',this)">✨ 빛나는</button>
+      <button onclick="setPublicCodexTab('rainbow',this)">🌈 무지개</button>
+    </div>
+
+    <div id="publicCodexGrid" class="codexGrid"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     개인 게임
+========================= -->
+
+<div id="privateGame" class="hidden">
+
+  <div class="privateSky"></div>
+  <div class="ocean"></div>
+  <div class="dock"></div>
+
+  <div class="character">
+    <div class="characterHead"></div>
+    <div class="characterBody"></div>
+    <div class="rod"></div>
+  </div>
+
+  <div id="bobber" class="bobber hidden"></div>
+
+  <div id="privateUI">
+
+    <div class="topLeft">
+      <div class="moneyBox">
+        💰 <span id="moneyText">0</span> G
+      </div>
+
+      <div class="rodBox">
+        🎣 <span id="rodText">나뭇가지 낚싯대</span>
+      </div>
+    </div>
+
+    <div class="topButtons">
+      <button class="uiBtn" onclick="openInventory()">🎒 인벤토리</button>
+      <button class="uiBtn" onclick="openCodex()">📖 도감</button>
+      <button class="uiBtn" onclick="openShop()">🛒 상점</button>
+      <button class="uiBtn" onclick="openSell()">💰 판매</button>
+      <button class="uiBtn" onclick="openSave()">💾 저장</button>
+      <button class="uiBtn" onclick="openLoad()">📂 불러오기</button>
+      <button class="uiBtn" onclick="backToServers()">🏠 나가기</button>
+    </div>
+
+    <div class="actionButtons">
+      <button class="castBtn" onclick="startFishing()">
+        🎣 낚시
+      </button>
+    </div>
+
+    <div id="catchBar" class="catchBar hidden">
+      <div id="catchFill" class="catchFill"></div>
+      <div class="catchText">클릭 또는 ENTER를 빠르게 누르세요!</div>
+    </div>
+
+    <div id="catchResult" class="catchResult hidden"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     인벤토리
+========================= -->
+
+<div id="inventoryModal" class="modal hidden">
+  <div class="modalBox">
+
+    <div class="modalHeader">
+      <h2>🎒 물고기 인벤토리</h2>
+      <button class="closeBtn" onclick="closeModal('inventoryModal')">닫기</button>
+    </div>
+
+    <div id="inventoryGrid" class="inventoryGrid"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     상점
+========================= -->
+
+<div id="shopModal" class="modal hidden">
+  <div class="modalBox">
+
+    <div class="modalHeader">
+      <h2>🛒 낚싯대 상점</h2>
+      <button class="closeBtn" onclick="closeModal('shopModal')">닫기</button>
+    </div>
+
+    <div id="shopGrid" class="shopGrid"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     판매
+========================= -->
+
+<div id="sellModal" class="modal hidden">
+  <div class="modalBox">
+
+    <div class="modalHeader">
+      <h2>💰 물고기 판매</h2>
+      <button class="closeBtn" onclick="closeModal('sellModal')">닫기</button>
+    </div>
+
+    <p>원하는 물고기만 선택해서 판매할 수 있습니다.</p>
+
+    <div id="sellGrid" class="inventoryGrid"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     도감
+========================= -->
+
+<div id="codexModal" class="modal hidden">
+  <div class="codexPanel">
+
+    <div class="codexHeader">
+      <h2>📖 물고기 도감</h2>
+      <button class="closeBtn" onclick="closeModal('codexModal')">닫기</button>
+    </div>
+
+    <div class="codexTabs">
+      <button class="active" onclick="setPrivateCodexTab('all',this)">전체</button>
+      <button onclick="setPrivateCodexTab('normal',this)">🐟 기본</button>
+      <button onclick="setPrivateCodexTab('different',this)">🎨 색이 다른</button>
+      <button onclick="setPrivateCodexTab('shiny',this)">✨ 빛나는</button>
+      <button onclick="setPrivateCodexTab('rainbow',this)">🌈 무지개</button>
+    </div>
+
+    <div id="privateCodexGrid" class="codexGrid"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     저장
+========================= -->
+
+<div id="saveModal" class="modal hidden">
+  <div class="modalBox">
+
+    <div class="modalHeader">
+      <h2>💾 저장</h2>
+      <button class="closeBtn" onclick="closeModal('saveModal')">닫기</button>
+    </div>
+
+    <input id="saveNameInput"
+           class="saveInput"
+           maxlength="30"
+           placeholder="저장 이름">
+
+    <button class="uiBtn"
+            style="background:#148de0"
+            onclick="saveNamedGame()">
+      💾 이 이름으로 저장
+    </button>
+
+    <div id="saveList" class="saveGrid"></div>
+
+  </div>
+</div>
+
+<!-- =========================
+     불러오기
+========================= -->
+
+<div id="loadModal" class="modal hidden">
+  <div class="modalBox">
+
+    <div class="modalHeader">
+      <h2>📂 불러오기</h2>
+      <button class="closeBtn" onclick="closeModal('loadModal')">닫기</button>
+    </div>
+
+    <input id="loadNameInput"
+           class="saveInput"
+           maxlength="30"
+           placeholder="저장 이름">
+
+    <button class="uiBtn"
+            style="background:#148de0"
+            onclick="loadNamedGame()">
+      📂 이 이름 불러오기
+    </button>
+
+    <div id="loadList" class="saveGrid"></div>
+
+  </div>
+</div>
+
+<script type="module">
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInAnonymously
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  remove,
+  onValue,
+  onDisconnect,
+  runTransaction
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyBjtnBoPD8NHXUzh4lLfdKMiZusWYvnd2Y",
+
+  authDomain:
+    "fishing-3d841.firebaseapp.com",
+
+  databaseURL:
+    "https://fishing-3d841-default-rtdb.firebaseio.com",
+
+  projectId:
+    "fishing-3d841",
+
+  storageBucket:
+    "fishing-3d841.firebasestorage.app",
+
+  messagingSenderId:
+    "842079619009",
+
+  appId:
+    "1:842079619009:web:e06bf2ad7d2541706ed140"
+};
+
+
+const firebaseApp = initializeApp(firebaseConfig);
+
+const auth = getAuth(firebaseApp);
+
+const db = getDatabase(firebaseApp);
+
+
+/* =====================================================
+   물고기 100종
+===================================================== */
+
+const fishNames = [
+"멸치","고등어","정어리","전갱이","청어","꽁치","도미","가자미","광어","숭어",
+"전어","쥐치","망둥어","볼락","농어","우럭","피라미","송사리","빙어","붕어",
+"복어","연어","참치","송어","방어","삼치","쏨뱅이","붕장어","문어","오징어",
+"가오리","해마","날치","쥐가오리","청새치","갈치","도루묵","참돔","돌돔","민어",
+"상어","황금물고기","망치상어","톱상어","전기뱀장어","거대복어","푸른가오리","거대문어","심해오징어","검은참치",
+"붉은상어","은빛고래","해룡","산호물고기","보석복어","거대해마","푸른해룡","황금가오리","왕가오리","검은문어",
+"거대오징어","황금상어","왕고래","붉은용어","천둥참치","화염복어","얼음상어","유령오징어","폭풍가오리","태풍참치",
+"용암물고기","별꼬리물고기","천공고래","번개상어","황금용어","왕문어","심해왕","푸른고래","폭풍고래","하늘가오리",
+"심해룡","별빛고래","달빛상어","태양참치","은하오징어","우주가오리","혜성물고기","성운복어","꿈의고래","시간물고기",
+"공허상어","무지개용어","천상의고래","신비의해마","은하해룡","별의심장어","우주고대어","신비의바다신","태양의고래","차원의가오리"
+];
+
+
+const rarityNames =
+["기본","레어","희귀","전설","신비","원시"];
+
+const rarityValues =
+[20,100,500,3000,15000,100000];
+
+const rarityEmojis =
+["🐟","🔵","🟣","🟡","🔮","🌌"];
+
+
+const fishData = fishNames.map((name,i)=>{
+
+  let rarity;
+
+  if(i < 18) rarity=0;
+  else if(i < 36) rarity=1;
+  else if(i < 54) rarity=2;
+  else if(i < 72) rarity=3;
+  else if(i < 91) rarity=4;
+  else rarity=5;
+
+  return {
+    id:i,
+    name,
+    rarity,
+    value:Math.floor(
+      rarityValues[rarity] * (1+i*.02)
+    )
+  };
+
+});
+
+
+/* =====================================================
+   특성
+===================================================== */
+
+const traits = {
+
+  normal:{
+    name:"기본",
+    emoji:"🐟",
+    multiplier:1
+  },
+
+  different:{
+    name:"색이 다른",
+    emoji:"🎨",
+    multiplier:2
+  },
+
+  shiny:{
+    name:"빛나는",
+    emoji:"✨",
+    multiplier:8
+  },
+
+  rainbow:{
+    name:"무지개",
+    emoji:"🌈",
+    multiplier:30
+  }
+
+};
+
+const traitKeys =
+["normal","different","shiny","rainbow"];
+
+
+function getTrait(){
+
+  const r=Math.random()*100;
+
+  if(r<.1)
+    return "rainbow";
+
+  if(r<1)
+    return "shiny";
+
+  if(r<6)
+    return "different";
+
+  return "normal";
+}
+
+
+/* =====================================================
+   낚싯대
+===================================================== */
+
+const rods = [
+
+ {name:"나뭇가지 낚싯대",price:0,luck:0,power:1,speed:1},
+
+ {name:"초보 낚싯대",price:100,luck:3,power:1.05,speed:1.02},
+
+ {name:"튼튼한 낚싯대",price:300,luck:7,power:1.1,speed:1.05},
+
+ {name:"구리 낚싯대",price:600,luck:11,power:1.15,speed:1.08},
+
+ {name:"철 낚싯대",price:1000,luck:16,power:1.2,speed:1.1},
+
+ {name:"강철 낚싯대",price:1800,luck:22,power:1.3,speed:1.13},
+
+ {name:"은빛 낚싯대",price:3000,luck:30,power:1.4,speed:1.16},
+
+ {name:"금빛 낚싯대",price:5000,luck:40,power:1.5,speed:1.2},
+
+ {name:"황금 낚싯대",price:8000,luck:50,power:1.65,speed:1.25},
+
+ {name:"다이아 낚싯대",price:13000,luck:62,power:1.8,speed:1.3},
+
+ {name:"전설 낚싯대",price:20000,luck:75,power:2,speed:1.35},
+
+ {name:"신비 낚싯대",price:35000,luck:90,power:2.2,speed:1.4},
+
+ {name:"우주 낚싯대",price:60000,luck:110,power:2.45,speed:1.5},
+
+ {name:"태초 낚싯대",price:100000,luck:140,power:2.8,speed:1.6},
+
+ {name:"창조신의 낚싯대",price:250000,luck:200,power:3.2,speed:1.8}
+
+];
+
+
+/* =====================================================
+   개인 데이터
+===================================================== */
+
+const SAVE_KEY="fishing_save_slots";
+
+let money=500;
+
+let currentRod=0;
+
+let inventory={};
+
+let discovered={};
+
+let fishingState="idle";
+
+let catchPower=0;
+
+let waitTimer=null;
+
+let currentFish=null;
+
+let privateCodexTab="all";
+
+
+/* =====================================================
+   개인 게임 시작
+===================================================== */
+
+window.startPrivate=function(){
+
+  document.getElementById("serverSelect")
+    .classList.add("hidden");
+
+  document.getElementById("privateGame")
+    .classList.remove("hidden");
+
+  loadAutoSave();
+
+  updatePrivateUI();
+
+};
+
+
+window.backToServers=function(){
+
+  clearTimeout(waitTimer);
+
+  fishingState="idle";
+
+  document.getElementById("privateGame")
+    .classList.add("hidden");
+
+  document.getElementById("publicGame")
+    .classList.add("hidden");
+
+  document.getElementById("serverSelect")
+    .classList.remove("hidden");
+
+};
+
+
+/* =====================================================
+   개인 낚시
+===================================================== */
+
+window.startFishing=function(){
+
+  if(fishingState!=="idle")
+    return;
+
+  fishingState="waiting";
+
+  const bobber=
+    document.getElementById("bobber");
+
+  bobber.classList.remove("hidden");
+
+  const character=
+    document.querySelector(".character");
+
+  const rect=
+    character.getBoundingClientRect();
+
+  bobber.style.left=
+    (rect.left+rect.width+150)+"px";
+
+  bobber.style.top=
+    (rect.top+80)+"px";
+
+  const rod=rods[currentRod];
+
+  const delay=
+    (1300+Math.random()*2800)/rod.speed;
+
+  waitTimer=setTimeout(()=>{
+
+    fishingState="catching";
+
+    document
+      .getElementById("catchBar")
+      .classList.remove("hidden");
+
+  },delay);
+
+};
+
+
+function catchClick(){
+
+  if(fishingState!=="catching")
+    return;
+
+  catchPower +=
+    8 * rods[currentRod].power;
+
+  if(catchPower>=100){
+
+    catchPower=0;
+
+    fishingState="idle";
+
+    document
+      .getElementById("catchBar")
+      .classList.add("hidden");
+
+    document
+      .getElementById("bobber")
+      .classList.add("hidden");
+
+    catchFish();
+
+  }
+
+  document
+    .getElementById("catchFill")
+    .style.width=
+    Math.min(100,catchPower)+"%";
+
+}
+
+
+function catchFish(){
+
+  const fish=
+    chooseFish();
+
+  const trait=
+    getTrait();
+
+  const key=
+    fish.id+"|"+trait;
+
+  inventory[key]=
+    (inventory[key]||0)+1;
+
+  discovered[key]=true;
+
+  currentFish={
+    fish,
+    trait
+  };
+
+  showCatchResult(fish,trait);
+
+  autoSave();
+
+  updatePrivateUI();
+
+}
+
+
+function chooseFish(){
+
+  const luck=
+    rods[currentRod].luck;
+
+  const weights=[
+
+    40,
+
+    15,
+
+    5*(1+luck/100),
+
+    1.5*(1+luck/70),
+
+    .3*(1+luck/55),
+
+    .03*(1+luck/40)
+
+  ];
+
+  let total=
+    weights.reduce((a,b)=>a+b,0);
+
+  let r=
+    Math.random()*total;
+
+  for(let i=0;i<weights.length;i++){
+
+    r-=weights[i];
+
+    if(r<=0){
+
+      const candidates=
+        fishData.filter(f=>f.rarity===i);
+
+      return candidates[
+        Math.floor(
+          Math.random()*candidates.length
+        )
+      ];
+    }
+
+  }
+
+  return fishData[0];
+
+}
+
+
+function showCatchResult(fish,trait){
+
+  const t=traits[trait];
+
+  const box=
+    document.getElementById("catchResult");
+
+  box.className=
+    "catchResult trait"+trait.charAt(0).toUpperCase()+trait.slice(1);
+
+  box.innerHTML=`
+
+    <div style="font-size:55px">
+      ${t.emoji}${rarityEmojis[fish.rarity]}
+    </div>
+
+    <b>${t.name} ${fish.name}</b>
+
+    <div style="margin-top:8px">
+      ${rarityNames[fish.rarity]}
+    </div>
+
+    <div style="margin-top:8px">
+      판매가 ${formatMoney(
+        fish.value*t.multiplier
+      )} G
+    </div>
+
+  `;
+
+  box.classList.remove("hidden");
+
+  setTimeout(()=>{
+
+    box.classList.add("hidden");
+
+  },2200);
+
+}
+
+
+/* =====================================================
+   UI
+===================================================== */
+
+function updatePrivateUI(){
+
+  document.getElementById("moneyText")
+    .textContent=
+    formatMoney(money);
+
+  document.getElementById("rodText")
+    .textContent=
+    rods[currentRod].name;
+
+}
+
+
+function formatMoney(n){
+
+  return Math.floor(n)
+    .toLocaleString("ko-KR");
+
+}
+
+
+/* =====================================================
+   인벤토리
+===================================================== */
+
+window.openInventory=function(){
+
+  renderInventory();
+
+  document
+    .getElementById("inventoryModal")
+    .classList.remove("hidden");
+
+};
+
+
+function renderInventory(){
+
+  const grid=
+    document.getElementById("inventoryGrid");
+
+  grid.innerHTML="";
+
+  const keys=
+    Object.keys(inventory)
+      .filter(k=>inventory[k]>0);
+
+  if(!keys.length){
+
+    grid.innerHTML=
+      `<p>아직 잡은 물고기가 없습니다.</p>`;
+
+    return;
+
+  }
+
+  keys.forEach(key=>{
+
+    const [fishId,trait]=key.split("|");
+
+    const fish=
+      fishData[Number(fishId)];
+
+    const t=
+      traits[trait];
+
+    const price=
+      Math.floor(
+        fish.value*t.multiplier
+      );
+
+    const div=
+      document.createElement("div");
+
+    div.className=
+      "itemCard trait"+
+      trait.charAt(0).toUpperCase()+
+      trait.slice(1);
+
+    div.innerHTML=`
+
+      <div style="font-size:38px">
+        ${t.emoji}${rarityEmojis[fish.rarity]}
+      </div>
+
+      <b>${t.name} ${fish.name}</b>
+
+      <small>
+        ${rarityNames[fish.rarity]}
+      </small>
+
+      <small>
+        보유: ${inventory[key]}마리
+      </small>
+
+      <small>
+        1마리 ${formatMoney(price)}G
+      </small>
+
+    `;
+
+    grid.appendChild(div);
+
+  });
+
+}
+
+
+/* =====================================================
+   판매
+===================================================== */
+
+window.openSell=function(){
+
+  renderSell();
+
+  document
+    .getElementById("sellModal")
+    .classList.remove("hidden");
+
+};
+
+
+function renderSell(){
+
+  const grid=
+    document.getElementById("sellGrid");
+
+  grid.innerHTML="";
+
+  const keys=
+    Object.keys(inventory)
+      .filter(k=>inventory[k]>0);
+
+  if(!keys.length){
+
+    grid.innerHTML=
+      `<p>판매할 물고기가 없습니다.</p>`;
+
+    return;
+
+  }
+
+  keys.forEach(key=>{
+
+    const [fishId,trait]=key.split("|");
+
+    const fish=
+      fishData[Number(fishId)];
+
+    const t=
+      traits[trait];
+
+    const price=
+      Math.floor(
+        fish.value*t.multiplier
+      );
+
+    const div=
+      document.createElement("div");
+
+    div.className="itemCard";
+
+    div.innerHTML=`
+
+      <div style="font-size:38px">
+        ${t.emoji}${rarityEmojis[fish.rarity]}
+      </div>
+
+      <b>${t.name} ${fish.name}</b>
+
+      <div>보유 ${inventory[key]}마리</div>
+
+      <div>${formatMoney(price)} G</div>
+
+      <button class="sellBtn"
+        onclick="sellOne('${key}')">
+        1마리 판매
+      </button>
+
+      <button class="sellBtn"
+        onclick="sellAll('${key}')">
+        전부 판매
+      </button>
+
+    `;
+
+    grid.appendChild(div);
+
+  });
+
+}
+
+
+window.sellOne=function(key){
+
+  if(!inventory[key])
+    return;
+
+  const [fishId,trait]=key.split("|");
+
+  const fish=
+    fishData[Number(fishId)];
+
+  const price=
+    Math.floor(
+      fish.value*traits[trait].multiplier
+    );
+
+  money+=price;
+
+  inventory[key]--;
+
+  if(inventory[key]<=0)
+    delete inventory[key];
+
+  autoSave();
+
+  updatePrivateUI();
+
+  renderSell();
+
+};
+
+
+window.sellAll=function(key){
+
+  if(!inventory[key])
+    return;
+
+  const [fishId,trait]=key.split("|");
+
+  const fish=
+    fishData[Number(fishId)];
+
+  const price=
+    Math.floor(
+      fish.value*
+      traits[trait].multiplier*
+      inventory[key]
+    );
+
+  money+=price;
+
+  delete inventory[key];
+
+  autoSave();
+
+  updatePrivateUI();
+
+  renderSell();
+
+};
+
+
+/* =====================================================
+   낚싯대 상점
+===================================================== */
+
+window.openShop=function(){
+
+  renderShop();
+
+  document
+    .getElementById("shopModal")
+    .classList.remove("hidden");
+
+};
+
+
+function renderShop(){
+
+  const grid=
+    document.getElementById("shopGrid");
+
+  grid.innerHTML="";
+
+  rods.forEach((rod,i)=>{
+
+    const div=
+      document.createElement("div");
+
+    div.className="itemCard";
+
+    const owned=
+      i<=currentRod;
+
+    const next=
+      i===currentRod+1;
+
+    let button="";
+
+    if(owned){
+
+      button=
+        `<button disabled
+          style="background:#555">
+          ${i===currentRod?"현재 장착":"보유"}
+        </button>`;
+
+    }else if(next){
+
+      button=
+        `<button onclick="buyRod(${i})">
+          ${formatMoney(rod.price)} G에 구매
+        </button>`;
+
+    }else{
+
+      button=
+        `<button disabled
+          style="background:#555">
+          이전 낚싯대부터 구매
+        </button>`;
+
+    }
+
+    div.innerHTML=`
+
+      <h3>🎣 ${rod.name}</h3>
+
+      <div>가격: ${formatMoney(rod.price)}G</div>
+
+      <div>행운: +${rod.luck}</div>
+
+      <div>파워: ×${rod.power}</div>
+
+      <div>속도: ×${rod.speed}</div>
+
+      ${button}
+
+    `;
+
+    grid.appendChild(div);
+
+  });
+
+}
+
+
+window.buyRod=function(i){
+
+  const rod=rods[i];
+
+  if(i!==currentRod+1){
+
+    alert("현재 낚싯대의 다음 단계만 구매할 수 있습니다.");
+
+    return;
+
+  }
+
+  if(money<rod.price){
+
+    alert(
+      "돈이 부족합니다.\n"+
+      "필요한 돈: "+formatMoney(rod.price)+"G"
+    );
+
+    return;
+
+  }
+
+  money-=rod.price;
+
+  currentRod=i;
+
+  autoSave();
+
+  updatePrivateUI();
+
+  renderShop();
+
+};
+
+
+/* =====================================================
+   개인 도감
+===================================================== */
+
+window.openCodex=function(){
+
+  renderPrivateCodex();
+
+  document
+    .getElementById("codexModal")
+    .classList.remove("hidden");
+
+};
+
+
+window.setPrivateCodexTab=function(tab,button){
+
+  privateCodexTab=tab;
+
+  document
+    .querySelectorAll("#codexModal .codexTabs button")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  renderPrivateCodex();
+
+};
+
+
+function renderPrivateCodex(){
+
+  const grid=
+    document.getElementById("privateCodexGrid");
+
+  grid.innerHTML="";
+
+  let list=[];
+
+  fishData.forEach(fish=>{
+
+    traitKeys.forEach(trait=>{
+
+      if(
+        privateCodexTab==="all" ||
+        privateCodexTab===trait
+      ){
+
+        list.push({
+          fish,
+          trait
+        });
+
+      }
+
+    });
+
+  });
+
+  list.forEach(({fish,trait})=>{
+
+    const t=traits[trait];
+
+    const key=
+      fish.id+"|"+trait;
+
+    const known=
+      !!discovered[key];
+
+    const div=
+      document.createElement("div");
+
+    div.className=
+      "codexCard "+
+      (known?"known ":"")+
+      "trait"+
+      trait.charAt(0).toUpperCase()+
+      trait.slice(1);
+
+    div.innerHTML=`
+
+      <div class="${known?"codexFish":"codexUnknown"}">
+        ${known?t.emoji:"❓"}
+      </div>
+
+      <b>
+        ${known?fish.name:"???"}
+      </b>
+
+      <small>
+        ${rarityEmojis[fish.rarity]}
+        ${rarityNames[fish.rarity]}
+      </small>
+
+      <small>
+        ${t.emoji} ${t.name}
+      </small>
+
+    `;
+
+    grid.appendChild(div);
+
+  });
+
+}
+
+
+/* =====================================================
+   저장 / 불러오기
+===================================================== */
+
+function getSaveSlots(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(SAVE_KEY)||"{}"
+    );
+
+  }catch{
+
+    return {};
+
+  }
+
+}
+
+
+function makeSaveData(){
+
+  return {
+
+    money,
+
+    currentRod,
+
+    inventory,
+
+    discovered,
+
+    savedAt:Date.now()
+
+  };
+
+}
+
+
+window.openSave=function(){
+
+  renderSaveList();
+
+  document
+    .getElementById("saveModal")
+    .classList.remove("hidden");
+
+};
+
+
+window.openLoad=function(){
+
+  renderLoadList();
+
+  document
+    .getElementById("loadModal")
+    .classList.remove("hidden");
+
+};
+
+
+window.saveNamedGame=function(){
+
+  const input=
+    document.getElementById("saveNameInput");
+
+  const name=
+    input.value.trim();
+
+  if(!name){
+
+    alert("저장 이름을 입력해주세요.");
+
+    return;
+
+  }
+
+  const slots=
+    getSaveSlots();
+
+  slots[name]=makeSaveData();
+
+  localStorage.setItem(
+    SAVE_KEY,
+    JSON.stringify(slots)
+  );
+
+  localStorage.setItem(
+    "fishing_auto_save",
+    JSON.stringify(makeSaveData())
+  );
+
+  input.value="";
+
+  renderSaveList();
+
+  alert(
+    `"${name}" 이름으로 저장했습니다.`
+  );
+
+};
+
+
+function renderSaveList(){
+
+  const box=
+    document.getElementById("saveList");
+
+  const slots=
+    getSaveSlots();
+
+  box.innerHTML="";
+
+  const names=
+    Object.keys(slots);
+
+  if(!names.length){
+
+    box.innerHTML=
+      `<p>저장된 게임이 없습니다.</p>`;
+
+    return;
+
+  }
+
+  names.forEach(name=>{
+
+    const data=slots[name];
+
+    const div=
+      document.createElement("div");
+
+    div.className="itemCard";
+
+    div.innerHTML=`
+
+      <b>💾 ${escapeHtml(name)}</b>
+
+      <small>
+        돈: ${formatMoney(data.money)}G
+      </small>
+
+      <small>
+        낚싯대: ${rods[data.currentRod]?.name||"알 수 없음"}
+      </small>
+
+      <small>
+        ${new Date(data.savedAt).toLocaleString()}
+      </small>
+
+      <button onclick="loadSlot('${encodeURIComponent(name)}')">
+        📂 불러오기
+      </button>
+
+      <button class="deleteBtn"
+        onclick="deleteSlot('${encodeURIComponent(name)}')">
+        🗑️ 삭제
+      </button>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+
+function renderLoadList(){
+
+  const box=
+    document.getElementById("loadList");
+
+  const slots=
+    getSaveSlots();
+
+  box.innerHTML="";
+
+  const names=
+    Object.keys(slots);
+
+  if(!names.length){
+
+    box.innerHTML=
+      `<p>저장된 게임이 없습니다.</p>`;
+
+    return;
+
+  }
+
+  names.forEach(name=>{
+
+    const data=slots[name];
+
+    const div=
+      document.createElement("div");
+
+    div.className="itemCard";
+
+    div.innerHTML=`
+
+      <b>💾 ${escapeHtml(name)}</b>
+
+      <small>
+        돈: ${formatMoney(data.money)}G
+      </small>
+
+      <small>
+        낚싯대: ${rods[data.currentRod]?.name||"알 수 없음"}
+      </small>
+
+      <button onclick="loadSlot('${encodeURIComponent(name)}')">
+        📂 불러오기
+      </button>
+
+      <button class="deleteBtn"
+        onclick="deleteSlot('${encodeURIComponent(name)}')">
+        🗑️ 삭제
+      </button>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+
+window.loadSlot=function(encoded){
+
+  const name=
+    decodeURIComponent(encoded);
+
+  const slots=
+    getSaveSlots();
+
+  const data=
+    slots[name];
+
+  if(!data){
+
+    alert("저장 데이터를 찾을 수 없습니다.");
+
+    return;
+
+  }
+
+  applySaveData(data);
+
+  alert(
+    `"${name}" 저장 데이터를 불러왔습니다.`
+  );
+
+  closeModal("loadModal");
+
+};
+
+
+window.loadNamedGame=function(){
+
+  const name=
+    document.getElementById("loadNameInput")
+      .value.trim();
+
+  if(!name){
+
+    alert("불러올 저장 이름을 입력해주세요.");
+
+    return;
+
+  }
+
+  loadSlot(
+    encodeURIComponent(name)
+  );
+
+};
+
+
+window.deleteSlot=function(encoded){
+
+  const name=
+    decodeURIComponent(encoded);
+
+  if(!confirm(
+    `"${name}" 저장 데이터를 삭제할까요?`
+  )){
+
+    return;
+
+  }
+
+  const slots=
+    getSaveSlots();
+
+  delete slots[name];
+
+  localStorage.setItem(
+    SAVE_KEY,
+    JSON.stringify(slots)
+  );
+
+  renderSaveList();
+
+  renderLoadList();
+
+};
+
+
+function applySaveData(data){
+
+  money=
+    Number(data.money)||0;
+
+  currentRod=
+    Math.max(
+      0,
+      Math.min(
+        rods.length-1,
+        Number(data.currentRod)||0
+      )
+    );
+
+  inventory=
+    data.inventory &&
+    typeof data.inventory==="object"
+      ? data.inventory
+      : {};
+
+  discovered=
+    data.discovered &&
+    typeof data.discovered==="object"
+      ? data.discovered
+      : {};
+
+  updatePrivateUI();
+
+  autoSave();
+
+}
+
+
+function autoSave(){
+
+  try{
+
+    localStorage.setItem(
+      "fishing_auto_save",
+      JSON.stringify(makeSaveData())
+    );
+
+  }catch(e){
+
+    console.warn("자동 저장 실패",e);
+
+  }
+
+}
+
+
+function loadAutoSave(){
+
+  try{
+
+    const raw=
+      localStorage.getItem(
+        "fishing_auto_save"
+      );
+
+    if(!raw)
+      return;
+
+    const data=
+      JSON.parse(raw);
+
+    applySaveData(data);
+
+  }catch(e){
+
+    console.warn(
+      "자동 저장 데이터를 불러오지 못했습니다.",
+      e
+    );
+
+  }
+
+}
+
+
+function escapeHtml(text){
+
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =====================================================
+   공통 모달
+===================================================== */
+
+window.closeModal=function(id){
+
+  document
+    .getElementById(id)
+    .classList.add("hidden");
+
+};
+
+
+/* =====================================================
+   키보드
+===================================================== */
+
+window.addEventListener("keydown",e=>{
+
+  if(
+    e.key==="Enter" &&
+    document
+      .getElementById("privateGame")
+      .classList.contains("hidden")===false
+  ){
+
+    e.preventDefault();
+
+    if(fishingState==="idle")
+      startFishing();
+    else if(fishingState==="catching")
+      catchClick();
+
+  }
+
+});
+
+
+window.addEventListener("click",e=>{
+
+  if(fishingState==="catching"){
+
+    if(
+      e.target.closest(
+        ".modal,.topButtons,.actionButtons"
+      )
+    ){
+
+      return;
+
+    }
+
+    catchClick();
+
+  }
+
+});
+
+
+/* =====================================================
+   공용 서버
+===================================================== */
+
+let currentUser=null;
+
+let publicNickname="";
+
+let publicPlayerX=50;
+
+let publicPlayers={};
+
+let publicUnsubs=[];
+
+let publicCodex={};
+
+let publicCodexTab="all";
+
+let publicFish=[];
+
+let publicKeysDown={};
+
+let publicMoveTimer=null;
+
+let publicJoined=false;
+
+
+/* =====================================================
+   Firebase 로그인
+===================================================== */
+
+async function ensureAnonymousLogin(){
+
+  try{
+
+    if(auth.currentUser){
+
+      currentUser=
+        auth.currentUser;
+
+      return currentUser;
+
+    }
+
+    const credential=
+      await signInAnonymously(auth);
+
+    currentUser=
+      credential.user;
+
+    return currentUser;
+
+  }catch(error){
+
+    throw error;
+
+  }
+
+}
+
+
+/* =====================================================
+   닉네임 창
+===================================================== */
+
+window.openNickname=function(){
+
+  document
+    .getElementById("nicknameScreen")
+    .classList.remove("hidden");
+
+  setTimeout(()=>{
+
+    document
+      .getElementById("nicknameInput")
+      .focus();
+
+  },100);
+
+};
+
+
+window.closeNickname=function(){
+
+  document
+    .getElementById("nicknameScreen")
+    .classList.add("hidden");
+
+};
+
+
+/* =====================================================
+   공용 서버 입장
+===================================================== */
+
+window.joinPublicServer=async function(){
+
+  const input=
+    document.getElementById("nicknameInput");
+
+  publicNickname=
+    input.value.trim();
+
+  if(!publicNickname){
+
+    alert("닉네임을 입력해주세요.");
+
+    return;
+
+  }
+
+  if(publicNickname.length>12){
+
+    alert("닉네임은 12글자 이하로 입력해주세요.");
+
+    return;
+
+  }
+
+  try{
+
+    input.disabled=true;
+
+    const user=
+      await ensureAnonymousLogin();
+
+    if(!user){
+
+      throw new Error(
+        "Firebase 익명 로그인을 완료하지 못했습니다."
+      );
+
+    }
+
+    publicJoined=true;
+
+    document
+      .getElementById("nicknameScreen")
+      .classList.add("hidden");
+
+    document
+      .getElementById("serverSelect")
+      .classList.add("hidden");
+
+    document
+      .getElementById("publicGame")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("publicName")
+      .textContent=
+      publicNickname;
+
+    await setupPublicPlayer();
+
+    setupPublicListeners();
+
+    createPublicFish();
+
+    startPublicMovement();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Firebase 연결에 실패했습니다.\n\n"+
+      "오류 코드: "+
+      (error.code||"없음")+
+      "\n\n"+
+      "오류 내용:\n"+
+      (error.message||error)
+    );
+
+  }finally{
+
+    input.disabled=false;
+
+  }
+
+};
+
+
+/* =====================================================
+   공용 플레이어
+===================================================== */
+
+async function setupPublicPlayer(){
+
+  const uid=
+    currentUser.uid;
+
+  const playerRef=
+    ref(
+      db,
+      "publicServer/players/"+uid
+    );
+
+  publicPlayerX=
+    20+Math.random()*60;
+
+  const color=
+    getPlayerColor(uid);
+
+  await set(playerRef,{
+
+    name:publicNickname,
+
+    x:publicPlayerX,
+
+    color,
+
+    joinedAt:Date.now()
+
+  });
+
+  onDisconnect(playerRef)
+    .remove();
+
+}
+
+
+function getPlayerColor(uid){
+
+  let n=0;
+
+  for(let i=0;i<uid.length;i++){
+
+    n=
+      (n*31+uid.charCodeAt(i))>>>0;
+
+  }
+
+  const colors=[
+    "#ff5757",
+    "#4d8dff",
+    "#50d878",
+    "#c45cff",
+    "#ff9d38",
+    "#25d5d5",
+    "#ff63b0",
+    "#a7d93f"
+  ];
+
+  return colors[
+    n%colors.length
+  ];
+
+}
+
+
+/* =====================================================
+   공용 리스너
+===================================================== */
+
+function setupPublicListeners(){
+
+  publicUnsubs.forEach(fn=>{
+
+    try{fn()}catch{}
+
+  });
+
+  publicUnsubs=[];
+
+
+  const playersRef=
+    ref(db,"publicServer/players");
+
+  const unsubPlayers=
+    onValue(
+      playersRef,
+      snapshot=>{
+
+        publicPlayers=
+          snapshot.val()||{};
+
+        renderPublicPlayers();
+
+      },
+      error=>{
+
+        console.error(
+          "players listener",
+          error
+        );
+
+        alert(
+          "공용 플레이어 정보를 읽지 못했습니다.\n"+
+          error.code+"\n"+
+          error.message
+        );
+
+      }
+    );
+
+  publicUnsubs.push(unsubPlayers);
+
+
+  const codexRef=
+    ref(db,"publicServer/codex");
+
+  const unsubCodex=
+    onValue(
+      codexRef,
+      snapshot=>{
+
+        publicCodex=
+          snapshot.val()||{};
+
+        updatePublicCodexCount();
+
+      },
+      error=>{
+
+        console.error(
+          "codex listener",
+          error
+        );
+
+        alert(
+          "공용 도감을 읽지 못했습니다.\n"+
+          error.code+"\n"+
+          error.message
+        );
+
+      }
+    );
+
+  publicUnsubs.push(unsubCodex);
+
+}
+
+
+/* =====================================================
+   공용 플레이어 렌더링
+===================================================== */
+
+function renderPublicPlayers(){
+
+  const world=
+    document.getElementById("publicWorld");
+
+  world
+    .querySelectorAll(".publicPlayer")
+    .forEach(el=>el.remove());
+
+
+  Object.entries(publicPlayers)
+    .forEach(([uid,p])=>{
+
+      const player=
+        document.createElement("div");
+
+      player.className=
+        "publicPlayer";
+
+      player.style.left=
+        p.x+"%";
+
+      player.innerHTML=`
+
+        <div class="playerName">
+          ${escapeHtml(p.name||"플레이어")}
+        </div>
+
+        <div class="playerHead"></div>
+
+        <div
+          class="playerBody"
+          style="background:${p.color||"#2980ff"}">
+        </div>
+
+      `;
+
+      world.appendChild(player);
+
+    });
+
+}
+
+
+/* =====================================================
+   공용 이동
+===================================================== */
+
+function startPublicMovement(){
+
+  if(publicMoveTimer)
+    clearInterval(publicMoveTimer);
+
+  publicMoveTimer=
+    setInterval(()=>{
+
+      if(!publicJoined || !currentUser)
+        return;
+
+      let direction=0;
+
+      if(publicKeysDown["a"] ||
+         publicKeysDown["ArrowLeft"]){
+
+        direction=-1;
+
+      }
+
+      if(publicKeysDown["d"] ||
+         publicKeysDown["ArrowRight"]){
+
+        direction=1;
+
+      }
+
+      if(direction===0)
+        return;
+
+      publicPlayerX+=direction*.8;
+
+      publicPlayerX=
+        Math.max(
+          3,
+          Math.min(97,publicPlayerX)
+        );
+
+      const playerRef=
+        ref(
+          db,
+          "publicServer/players/"+
+          currentUser.uid
+        );
+
+      update(playerRef,{
+
+        x:publicPlayerX
+
+      });
+
+    },60);
+
+}
+
+
+window.addEventListener("keydown",e=>{
+
+  if(
+    document
+      .getElementById("publicGame")
+      .classList.contains("hidden")
+  )
+    return;
+
+  const key=
+    e.key.toLowerCase();
+
+  if(
+    key==="a" ||
+    key==="d" ||
+    e.key==="ArrowLeft" ||
+    e.key==="ArrowRight"
+  ){
+
+    publicKeysDown[key]=true;
+
+    if(
+      e.key==="ArrowLeft" ||
+      e.key==="ArrowRight"
+    ){
+
+      publicKeysDown[e.key]=true;
+
+    }
+
+    e.preventDefault();
+
+  }
+
+});
+
+
+window.addEventListener("keyup",e=>{
+
+  const key=
+    e.key.toLowerCase();
+
+  delete publicKeysDown[key];
+
+  delete publicKeysDown[e.key];
+
+});
+
+
+/* =====================================================
+   공용 물고기
+===================================================== */
+
+function createPublicFish(){
+
+  const world=
+    document.getElementById("publicWorld");
+
+  world
+    .querySelectorAll(".publicCollectible")
+    .forEach(el=>el.remove());
+
+  publicFish=[];
+
+  /*
+    100종 전체를 공용 서버에 배치.
+    화면을 좌우로 넓게 사용.
+  */
+
+  fishData.forEach((fish,i)=>{
+
+    const x=
+      2+(i%25)*4;
+
+    const y=
+      20+Math.floor(i/25)*16;
+
+    const el=
+      document.createElement("div");
+
+    el.className=
+      "publicCollectible";
+
+    el.style.left=
+      x+"%";
+
+    el.style.bottom=
+      (180+y)+"px";
+
+    el.textContent=
+      rarityEmojis[fish.rarity];
+
+    el.title=
+      "물고기 발견하기";
+
+    el.dataset.fishId=
+      fish.id;
+
+    el.addEventListener(
+      "click",
+      ()=>discoverPublicFish(fish.id,el)
+    );
+
+    world.appendChild(el);
+
+    publicFish.push(el);
+
+  });
+
+}
+
+
+async function discoverPublicFish(fishId,element){
+
+  if(!currentUser)
+    return;
+
+  const fish=
+    fishData[fishId];
+
+  /*
+    공용 서버에서는 기본 특성으로
+    해당 물고기 자체를 발견하도록 처리.
+    이후 필요하면 특성별 발견도 확장 가능.
+  */
+
+  const key=
+    fish.id+"|normal";
+
+  try{
+
+    const codexRef=
+      ref(
+        db,
+        "publicServer/codex/"+key
+      );
+
+    await runTransaction(
+      codexRef,
+      current=>true
+    );
+
+    element.classList.add("caught");
+
+    alert(
+      "🐟 "+fish.name+
+      " 발견!\n\n"+
+      "공용 도감에 등록되었습니다."
+    );
+
+    updatePublicCodexCount();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "공용 도감 등록 실패\n"+
+      error.code+"\n"+
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   공용 도감
+===================================================== */
+
+window.openPublicCodex=function(){
+
+  renderPublicCodex();
+
+  document
+    .getElementById("publicCodexModal")
+    .classList.remove("hidden");
+
+};
+
+
+window.closePublicCodex=function(){
+
+  document
+    .getElementById("publicCodexModal")
+    .classList.add("hidden");
+
+};
+
+
+window.setPublicCodexTab=function(tab,button){
+
+  publicCodexTab=tab;
+
+  document
+    .querySelectorAll(
+      "#publicCodexModal .codexTabs button"
+    )
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  renderPublicCodex();
+
+};
+
+
+function renderPublicCodex(){
+
+  const grid=
+    document.getElementById("publicCodexGrid");
+
+  grid.innerHTML="";
+
+  fishData.forEach(fish=>{
+
+    traitKeys.forEach(trait=>{
+
+      if(
+        publicCodexTab!=="all" &&
+        publicCodexTab!==trait
+      )
+        return;
+
+      const key=
+        fish.id+"|"+trait;
+
+      const known=
+        !!publicCodex[key];
+
+      const t=
+        traits[trait];
+
+      const div=
+        document.createElement("div");
+
+      div.className=
+        "codexCard "+
+        (known?"known ":"")+
+        "trait"+
+        trait.charAt(0).toUpperCase()+
+        trait.slice(1);
+
+      div.innerHTML=`
+
+        <div class="${known?"codexFish":"codexUnknown"}">
+          ${known?t.emoji:"❓"}
+        </div>
+
+        <b>${known?fish.name:"???"}</b>
+
+        <small>
+          ${rarityEmojis[fish.rarity]}
+          ${rarityNames[fish.rarity]}
+        </small>
+
+        <small>
+          ${t.emoji} ${t.name}
+        </small>
+
+      `;
+
+      grid.appendChild(div);
+
+    });
+
+  });
+
+}
+
+
+function updatePublicCodexCount(){
+
+  const count=
+    Object.keys(publicCodex)
+      .filter(k=>publicCodex[k]).length;
+
+  document
+    .getElementById("publicCodexCount")
+    .textContent=count;
+
+}
+
+
+/* =====================================================
+   시작 시 Firebase 오류 테스트
+===================================================== */
+
+window.addEventListener("load",()=>{
+
+  console.log(
+    "Fishing game loaded."
+  );
+
+  console.log(
+    "Firebase project:",
+    firebaseConfig.projectId
+  );
+
+});
+
+</script>
+
+</body>
+</html>
